@@ -1,0 +1,380 @@
+<ItemConfirm>
+
+    CheckboxLeftWidget:
+        id: check
+        group: "térms"
+        on_active:
+            app.option_min_max(self.group)
+
+
+WindowManager:
+    HomeWindow:
+    FuncWindow:
+    TableWindow:
+    MinMaxWindow:
+    ResWindow:
+    CreateTableWindow:
+
+
+#Pantalla donde estan los 3 botones principales
+<HomeWindow>:
+    name: 'Home'
+    GridLayout:
+        id: main
+        rows: 4
+        padding: 10
+        spacing: 10
+
+        BoxLayout:
+            spacing: 10
+            Button:
+                text:  "Insertar funcion booleana"
+                font_size: 32
+                on_release:
+                    app.root.current = "first"
+                    root.manager.transition.direction = "left"
+        BoxLayout:
+            spacing: 10
+            Button:
+                text:  "Crear tabla de verdad"
+                font_size: 32
+                on_release: app.root.current = "second"
+        BoxLayout:
+            spacing: 10
+            Button:
+                text:  "Insertar minterminos/maxterminos"
+                font_size: 32
+                on_release:
+                    app.root.current = "third"
+                    root.manager.transition.direction = "left"
+        BoxLayout:
+            spacing: 10
+            Button:
+                text: "Opciones"
+                font_size: 32
+                on_release: app.options_menu()
+
+#Pantalla donde se ingresa la funcion
+<FuncWindow>:
+    name: 'first'
+    id: funcInput
+    GridLayout:
+
+        id: funcWin
+        rows: 4
+        columns : 2
+        padding: 10
+        spacing: 10
+
+        #Fila 1
+        BoxLayout:
+            Label:
+                text: "Funcion Booleana"
+                font_size: 32
+                color: 0,1,0,1
+
+        #Fila 2
+        BoxLayout:
+            TextInput:
+                id: func
+                font_size: 32
+                font_name: 'FreeSans'
+                multiline: False
+
+            Button:
+                text: "Evaluar"
+                font_size: 32
+                on_release:
+                    sim_func, terms_res, table_res, list_var = app.exeFunc(func.text)
+                    root.manager.screens[4].createMDtable(table_res, list_var)
+                    root.manager.screens[4].add_func_label(sim_func)
+                    print(root.manager.screens[4].ids.table_res.children)
+                    root.manager.screens[4].ids.minmax.text = str(terms_res)
+
+        #Fila 3
+        BoxLayout:
+            Button:
+                text: "AND (*)"
+                font_size: 20
+                on_release: func.text += '*'
+            Button:
+                text: "OR (+)"
+                font_size: 20
+                on_release: func.text += '+'
+            Button:
+                text: "NOT (¬)"
+                font_size: 20
+                on_release: func.text += '¬'
+            Button:
+                text: "XOR (⊕)"
+                font_size: 20
+                on_release: func.text += '⊕'
+
+        #Fila 4
+        BoxLayout:
+            Button:
+                text: "Regresar"
+                font_size: 32
+                on_release:
+                    app.root.current = "Home"
+                    root.manager.transition.direction = "right"
+
+            Button:
+                text: "Ayuda"
+                font_size: 32
+
+#Pantalla donde se crea la tabla
+<TableWindow>:
+    name: 'second'
+
+    GridLayout:
+
+        id:createTable
+        rows: 3
+        columns: 3
+        padding: 10
+        spacing: 10
+
+        BoxLayout:
+            orientation: "vertical"
+            size: root.width, root.height
+
+            Label:
+                text: "Tabla de verdad"
+                font_size: 32
+                color: 1,0,0,1
+
+        BoxLayout:
+
+            Label:
+                text: "Bits de entrada"
+                font_size: 32
+                color: 1,1,0,1
+
+            TextInput:
+                id: inputBits
+                font_size: 20
+                font_name: 'FreeSans'
+                multiline: False
+
+            Button:
+                text: "Crear tabla"
+                font_size: 32
+                on_release:
+                    valid = app.tryCreateTable(inputBits.text)
+                    app.root.current = 'createTable' if valid else app.data_error()
+                    root.manager.screens[5].ManualCreateMDtable(inputBits.text) if valid else app.data_error()
+
+        BoxLayout:
+            Button:
+                text: "Regresar"
+                font_size: 32
+                on_release: app.root.current = "Home"
+
+#Pantalla donde se insertan los minterminos/maxterminos y dont cares
+<MinMaxWindow>:
+    name: 'third'
+
+    GridLayout:
+
+        id: func
+        rows: 4
+        columns : 8
+        padding: 10
+        spacing: 10
+
+        #Fila 1
+        BoxLayout:
+            Label:
+                text: "Minterminos y Maxterminos"
+                font_size: 32
+                color: 0,0,1,1
+
+        #Fila 2
+        BoxLayout:
+
+            Label:
+                text: "Terminos:"
+                font_size: 20
+                color: 0,0,1,1
+
+            TextInput:
+                id: MinMaxInput
+                font_size: 32
+                multiline: False
+                font_name: 'FreeSans'
+
+            Label:
+                text: "Dont Cares:"
+                font_size: 15
+                color: 0,0,1,1
+
+            CheckBox:
+                id: CheckBoxDontCare
+                active: False
+
+
+            TextInput:
+                id: dontCare
+                font_size: 32
+                multiline: False
+                font_name: 'FreeSans'
+                disable: not CheckBoxDontCare.active
+                on_disable: self.opacity = 0 if self.disable else 1
+
+
+            Button:
+                text: "Evaluar"
+                font_size: 32
+                on_release:
+                    sim_func, terms_res, table_res, list_var = app.exeMinMax(MinMaxInput.text, dontCare, bits.text)
+                    root.manager.screens[4].createMDtable(table_res, list_var)
+                    root.manager.screens[4].add_func_label(sim_func)
+                    root.manager.screens[4].ids.minmax.text = str(terms_res)
+
+
+        #Fila 3
+        BoxLayout:
+
+            Label:
+                text: "Bits de entrada:"
+                font_size: 15
+                color: 0,0,1,1
+
+            TextInput:
+                id: bits
+                font_size: 15
+                multiline: False
+                font_name: 'FreeSans'
+
+            Label:
+                text: "Minterminos"
+                font_size: 15
+                color: 0,0,1,1
+
+            CheckBox:
+                group: "terminos"
+                active: True
+                on_active: app.min_or_max_input = 0
+
+            Label:
+                text: "Maxterminos"
+                font_size: 15
+                color: 0,0,1,1
+
+            CheckBox:
+                group: "terminos"
+                on_active: app.min_or_max_input = 1
+
+        #Fila 4
+        BoxLayout:
+
+            Button:
+                text: "Ayuda"
+                font_size: 32
+            Button:
+                text: "Regresar"
+                font_size: 32
+                on_release:
+                    app.root.current = "Home"
+                    root.manager.transition.direction = "right"
+
+#Pantalla de resultados
+<ResWindow>:
+    name: 'fourth'
+    table_res: table_res.__self__
+
+    MDGridLayout:
+        id: res
+        rows: 4
+        columns: 2
+        padding: 10
+        spacing: 10
+
+        #Fila 1
+        MDBoxLayout:
+            Label:
+                text: "Resultados"
+                font_size: 32
+                color: .2,.5,.3,1
+
+        #Fila 2
+        MDBoxLayout:
+            id: table_res
+
+
+        #Fila 3
+        MDBoxLayout:
+            Label:
+                id: minmax
+                font_size: 32
+                color: .2,.5,.3,1
+
+
+        #Fila 4:
+        MDBoxLayout:
+            Button:
+                text: "Regresar"
+                font_size: 32
+                on_release:
+                    app.root.current = "Home"
+                    root.manager.transition.direction = "right"
+                    root.deleteResTable()
+                    root.manager.screens[5].deleteTerms()
+                    root.manager.screens[5].delete_rows()
+
+
+<CreateTableWindow>:
+    name: 'createTable'
+    table_box: table_box
+
+    MDLabel:
+        pos_hint: {"center_x": .5, "top": 1}
+        size_hint: .9, .1
+        color: 0, 0, 0, 1
+        text: "Crear Tabla"
+        halign: "center"
+    MDBoxLayout:
+        id: table_box
+        pos_hint: {"center_x": .5, "top": .8}
+        size_hint: .9, .6
+
+    MDBoxLayout:
+        MDFillRoundFlatButton:
+            text: "Regresar"
+            pos_hint: {"center_x": .5, "top": .1}
+            on_release:
+                app.root.current = "Home"
+                root.manager.transition.direction = "right"
+                root.deleteTable()
+                root.deleteTerms()
+                root.delete_rows()
+
+        MDFillRoundFlatButton:
+            text: "Evaluar tabla"
+            pos_hint: {"center_x": .5, "top": .1}
+            on_release:
+                terms = root.createTerms(root.manager.screens[2].ids.inputBits.text)
+                table = root.createTable(root.manager.screens[2].ids.inputBits.text)
+                tuple_res = app.exeTable(terms, table, root.manager.screens[2].ids.inputBits.text)
+                root.manager.screens[4].ids.minmax.text = str(tuple_res[1])
+                root.manager.screens[4].createMDtable(tuple_res[2], tuple_res[3])
+                root.manager.screens[4].add_func_label(tuple_res[0])
+                root.deleteTable()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
