@@ -69,7 +69,7 @@ class CreateTableWindow(Screen):
 
 
     def on_row_press(self, instance_table, instance_row):
-        '''Called when a table row is clicked.'''
+        '''Llamado cuando se presiona un checkbox.'''
 
         key = instance_row.text
         term = self.rows_table[key]
@@ -80,18 +80,10 @@ class CreateTableWindow(Screen):
             self.minterms.pop(index)
 
 
-        '''term = int(current_row[1])
-        self.checked_rows = instance_table.get_row_checks()
-        if term not in self.minterms:
-            self.minterms.append(term)
-        elif current_row not in self.checked_rows:
-            index = self.minterms.index(term)
-            self.minterms.pop(index)'''
-
         print(self.minterms)
 
 
-
+    #Crea los terminos
     def createTerms(self, input_bits):
         n = int(input_bits)
         for i in range(2**n):
@@ -104,14 +96,14 @@ class CreateTableWindow(Screen):
         self.maxterms = list(set(self.maxterms))
         print(self.minterms, self.maxterms)
         return self.minterms, self.maxterms, []
-
+    #elimina terminos para que no se repitan en la siguiente ejecucion
     def deleteTerms(self):
         self.minterms = []
         self.maxterms = []
-
+    #Elimina filas que no se repitan en la siguiente ejecucion
     def delete_rows(self):
         self.checked_rows = []
-
+    #Crea tabla de resultados en forma de lista
     def createTable(self, input_bits):
         table = []
         n= int(input_bits)
@@ -127,33 +119,6 @@ class CreateTableWindow(Screen):
 
         return table
 
-    def syntax_error(self):
-        if not self.dialog:
-            self.dialog = MDDialog(
-                title=self.title,
-                text=self.text,
-                buttons=[
-                    MDFlatButton(
-                        text="Salir",
-                        on_release=self.close_dialog
-                    ),
-
-                ]
-            )
-        self.dialog.open()
-
-    def release_error(self, text, title):
-        self.text = text
-        self.title = title
-        if self.dialog is not None:
-            self.dialog.text = self.text
-        self.syntax_error()
-
-    def close_dialog(self, obj):
-        self.dialog.dismiss()
-        self.dialog = None
-
-
 
 class MinMaxWindow(Screen):
     pass
@@ -163,6 +128,7 @@ class HomeWindow(Screen):
 
 
 class ResWindow(Screen):
+    #Crea la tabla de verdad de resultados con la lista
     def createMDtable(self, table, list_var):
         columns = []
         rows = []
@@ -181,19 +147,10 @@ class ResWindow(Screen):
         )
 
         self.table_res.add_widget(Mdtable)
-
+    #Elimina la tabla para evitar duplicados
     def deleteResTable(self):
         self.table_res.clear_widgets()
-
-    def set_func_label(self, func):
-        self.table_res.func_res.text = func
-
-    def is_func_label(self, children):
-        if len(children) == 2:
-            return True
-        else:
-            return False
-
+    #Agrega la etiqueta de la funcion
     def add_func_label(self, func_text):
         func_label = Label(
             text= func_text,
@@ -215,15 +172,15 @@ class Example(MDApp):
     min_or_max = NumericProperty(0)
     min_or_max_input = NumericProperty(0)
     func_label = StringProperty("")
-
+    #Constructor de la clase
     def build(self):
         self.GUI = Builder.load_file('Home.kv')
         return self.GUI
-
+    #Cierra la ventana de dialogo
     def close_dialog(self, obj):
         self.dialog.dismiss()
         self.dialog = None
-
+    #Menu de opciones
     def options_menu(self):
         if not self.dialog:
             self.dialog = MDDialog(
@@ -245,7 +202,7 @@ class Example(MDApp):
             )
         self.dialog.open()
 
-
+    #Checa que opcion esta activa
     def option_min_max(self, instance_check):
         button_list = MDCheckbox.get_widgets(instance_check)
         index = len(button_list)-1
@@ -256,7 +213,7 @@ class Example(MDApp):
 
         print(button_list[index-1].active, button_list[index].active)
 
-
+    #Ventana de error
     def syntax_error(self):
         if not self.dialog:
             self.dialog = MDDialog(
@@ -272,6 +229,7 @@ class Example(MDApp):
             )
         self.dialog.open()
 
+    #Pone el texto y titulo y cierra el dialogo si anteriormente se abrio uno
     def release_error(self, text, title):
         self.text = text
         self.title = title
@@ -279,11 +237,7 @@ class Example(MDApp):
             self.dialog.text = self.text
         self.syntax_error()
 
-    def close_dialog(self, obj):
-        self.dialog.dismiss()
-        self.dialog = None
-
-
+    #Rutina que evalua el string de la funcion ingresado por el usuario
     def exeFunc(self, func):
         if func:
             try:
@@ -309,7 +263,7 @@ class Example(MDApp):
                 title = "Error de sintaxis"
                 self.release_error(text,title)
                 return '', None, None
-
+    #Crea la lista de terminos de los strings dados por el usuario
     def createMinMax(self, text_terms, dont_care, input_bits):
         term_patt = r'\d,?[\d,]*'
         error_patt = r'\D+'
@@ -368,7 +322,7 @@ class Example(MDApp):
                 return terms, other_terms, dont_care_terms
             else:
                 return other_terms, terms, dont_care_terms
-
+    #Evalua la lista de terminos creada anteriormente
     def exeMinMax(self, text_terms, dont_care, input_bits_text):
         try:
             input_bits = int(input_bits_text)
@@ -385,21 +339,21 @@ class Example(MDApp):
         sim_func, list_var = Logic.QM_imp_res(imp, self.min_or_max, tuple_terms, [], input_bits)
         self.root.current = "fourth"
         return sim_func, tuple_terms, table, list_var
-
+    #Evalua la tabla de verdad creada por el usuario
     def exeTable(self, terms, table, input_bits):
         n = int(input_bits)
         imp = Logic.QM_tables(terms, self.min_or_max, n)
         sim_func, list_var = Logic.QM_imp_res(imp, self.min_or_max, terms, [], n)
         self.root.current = "fourth"
         return sim_func, terms, table, list_var
-
+    #Detecta si no hay un error al ingresas el numero de variables de entrada de la tabla
     def tryCreateTable(self, input_bits):
         try:
             input_bits = int(input_bits)
             return True
         except ValueError:
             return False
-
+    #Lanza el error de datos para la pantalla de ingreso de variables de entrada al crear la tabla (Segunda Pantalla)
     def data_error(self):
         self.root.current = "second"
         title = "Error de dato"
