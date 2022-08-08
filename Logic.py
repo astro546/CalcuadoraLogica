@@ -429,25 +429,6 @@ def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
 
 
 
-'''func = 'a⊕b'
-var, list_var = detectVar(func)
-tabla = createTable(var, None)
-funcExe = addecuateFunc(func)
-result = evalFunc(funcExe, list_var, tabla)
-for r in result:
-    print(r, tuple(r))
-t = minter_maxter(result, var)
-
-min_or_max = 0
-imp2 = QM_tables(t,min_or_max,var)
-sim2 = QM_imp_res(imp2, min_or_max, t, list_var, var)'''
-
-'''terms = ([0,6,8,13,14], [1,3,5,7,13,15], [2,4,10])
-terms = dont_care(terms, min_or_max)
-
-var2 = len(str(bin(terms[min_or_max][-1])))-2
-imp = QM_tables(terms,min_or_max,var2)
-sim_func = QM_imp_res(imp, min_or_max, terms, ['A','B','C','D'], var2)'''
 
 
 
