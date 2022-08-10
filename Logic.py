@@ -217,6 +217,8 @@ def QM_tables(terms, min_or_max, var):
         implicants[f"{ones}"][i] = [tuple(num_bin), False]
 
     groups = list(implicants.keys())
+    groups.sort()
+    print(groups,len(groups))
     if len(groups) == 1:
         return implicants
     else:
@@ -225,7 +227,8 @@ def QM_tables(terms, min_or_max, var):
         groups_index = 0
         num_dif = 1
         while making_tables:
-            groups = list(implicants.keys())
+            groups = sort_groups(list(implicants.keys()))
+            print(groups)
             current_group = groups[groups_index]
             next_group = groups[groups_index+1]
             if len(next_group) > num_dif:
@@ -234,6 +237,7 @@ def QM_tables(terms, min_or_max, var):
                 current_group = groups[groups_index]
                 next_group = groups[groups_index + 1]
                 num_dif += 1
+
 
 
             new_group = list(set(list(f"{current_group}{next_group}")))
@@ -290,7 +294,7 @@ def QM_tables(terms, min_or_max, var):
 #Devuelve un string con la funcion simplificada de primos esenciales
 def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
     primes = [[], []]
-
+    print(imp_tab)
     if len(imp_tab) == 1:
         list_terms = []
         if len(list_var) == 0:
@@ -375,10 +379,11 @@ def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
     if len(missing_terms) > 0:
         if len(used_terms) > 0:
             for mt in primes[0]:
-                set_terms = set(mt[0])
-                if missing_terms.issubset(set_terms):
-                    essentials.append(mt)
-                    break
+                if mt[0] is tuple:
+                    set_terms = set(mt[0])
+                    if missing_terms.issubset(set_terms):
+                        essentials.append(mt)
+                        break
         else:
             essentials = primes[0]
 
@@ -427,6 +432,25 @@ def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
         sim_func = ''.join(temp_func)
         return sim_func, list_var
 
+def sort_groups(list_groups):
+    dict_groups = {}
+    sort_list_groups = []
+
+    list_groups.sort()
+    for i in list_groups:
+        long = len(i)
+        if long not in dict_groups.keys():
+            dict_groups[long] = []
+        dict_groups[long].append(i)
+
+    long_keys = list(dict_groups.keys())
+    long_keys.sort()
+
+    for j in long_keys:
+        dict_groups[j].sort()
+        sort_list_groups += dict_groups[j]
+
+    return sort_list_groups
 
 
 

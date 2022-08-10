@@ -289,7 +289,6 @@ class Example(MDApp):
             num_patt = r'\d+'
             terms = re.findall(num_patt, text_terms)
             terms = list(set(terms))
-            terms.sort()
             number_bits = (2**input_bits)
 
             if not dont_care.disable:
@@ -315,7 +314,7 @@ class Example(MDApp):
             for i in range(len(terms)):
                 terms[i] = int(terms[i])
 
-
+            terms.sort()
             other_terms.sort()
 
             if self.min_or_max_input == 0:
