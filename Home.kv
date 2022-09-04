@@ -122,6 +122,8 @@ WindowManager:
             Button:
                 text: "Ayuda"
                 font_size: 32
+                on_release:
+                    app.release_error(app.textAyudaFunc,"Ayuda")
 
 #Pantalla donde se crea la tabla
 <TableWindow>:
@@ -170,6 +172,12 @@ WindowManager:
                 text: "Regresar"
                 font_size: 32
                 on_release: app.root.current = "Home"
+            Button:
+                text: "Ayuda"
+                font_size: 32
+                on_release:
+                    app.release_error(app.textAyudaTable, "Ayuda")
+
 
 #Pantalla donde se insertan los minterminos/maxterminos y dont cares
 <MinMaxWindow>:
@@ -268,16 +276,19 @@ WindowManager:
 
         #Fila 4
         BoxLayout:
-
-            Button:
-                text: "Ayuda"
-                font_size: 32
             Button:
                 text: "Regresar"
                 font_size: 32
                 on_release:
                     app.root.current = "Home"
                     root.manager.transition.direction = "right"
+
+            Button:
+                text: "Ayuda"
+                font_size: 32
+                on_release:
+                    app.release_error(app.textAyudaMinMax, "Ayuda")
+
 
 #Pantalla de resultados
 <ResWindow>:

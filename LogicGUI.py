@@ -172,6 +172,37 @@ class Example(MDApp):
     min_or_max = NumericProperty(0)
     min_or_max_input = NumericProperty(0)
     func_label = StringProperty("")
+    textAyudaFunc = "La sintaxis para las funciones es la siguiente: \nPara el operador AND se puede escribir como: \n" \
+                    "AB o A*B\n" \
+                    "Para el operador OR se puede escribir de la siguiente manera:\n" \
+                    "A+B\n" \
+                    "Para el operador NOT se puede escribir de la siguiente manera:\n" \
+                    "¬A\n" \
+                    "Para el operador XOR se puede escribir de las siguientes maneras:\n" \
+                    "A⊕B o A^B" \
+                    "Las variables y/o operaciones se pueden escrbir entre parentesis:\n" \
+                    "(a)(b), (a)+(b),(ab),(a+b),(a)^(b),(a^b)\n" \
+                    "Tambien con los parentesis se pueden escribir funciones compuestas:" \
+                    "a(c+d), ¬(a+b)c, (¬a^c+cd)ef\n" \
+                    "Los parentesis deben de ir cerrados, y las operaciones no deben de estar imcompletas.\n" \
+                    "Ademas de que las variables solo deben de ser letras mayusculas o minusculas, no se admiten numeros u otros caracteres especiales como variables." \
+                    "Si estas condiciones no se cumplen, generaran errores. Ejemplos de mala sintaxis:\n" \
+                    "a+, a¬, (ab, a+b), ab(c+5)"
+    textAyudaTable = "Primero ingrese los bits de entrada, los cuales deben de ser estrictamente numeros, no letras ni caracteres especiales.\n" \
+                     "Despues, aparece una ventana con una tabla de verdad, en la cual debes de marcar las casillas de las combinaciones cuyas salidas quieres que sea 1," \
+                     "una casilla marcada significa 1, y una casilla descamarcada significa 0. Las tablas se presentan en grupos de 8 combinaciones, por lo que , por ejemplo," \
+                     "para una tabla de verdad de 4 bits de entrada, esta se dividira en dos partes, una con las primeras 8 combinaciones de entrada, y otra con las otras 8 restantes."
+    textAyudaMinMax = "En la casilla de bits de entrada, se ingresa el numero de bits de entrada, no deben de ingresarse letras o caracteres especiales en ese campo.\n" \
+                      "\n" \
+                      "En la casilla de Terminos se ingresaran los terminos de la funcion, y se debe de marcar si son minterminos o maxterminos. Por default, el programa los toma como minterminos." \
+                      "El formato para ingresar los terminos es el siguiente:\n" \
+                      "1,2,3,4..,n o 1,2,3,4..,n\n," \
+                      "En la casilla de terminos no se debe ingresar letras o caracteres especiales. Tampoco se deben ingresar comas seguidas.\n" \
+                      "Ejemplos de mala sintaxis: \n" \
+                      "1,2,,3 , ,,,, , ,,1,2  , a,b,c,#,%\n" \
+                      "\n" \
+                      "La casilla de Dont Cares sirve para ingresar terminos dont cares. Para ingresar terminos dont cares, esta casilla debe de estar activada, ya que esta casilla es opcional.\n" \
+                      "La sintaxis que se debe de seguir para ingresar terminos Dont Cares es la misma que para ingresar los terminos de la funcion."
     #Constructor de la clase
     def build(self):
         self.GUI = Builder.load_file('Home.kv')

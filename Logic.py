@@ -204,7 +204,7 @@ def dont_care(terms , min_or_max):
 #Simplifica funciones con el metodo de quine-mckluskey
 #QM_tables hace la primera parte del metodo, que es hacer la tabla de implicantes
 def QM_tables(terms, min_or_max, var):
-    implicants = {}
+    implicants = {} #Se crea la tabla de implicantes con los terminos de la funcion
 
     for t in terms[min_or_max]:
         num_bin = format_bin(t, var)
@@ -218,7 +218,6 @@ def QM_tables(terms, min_or_max, var):
 
     groups = list(implicants.keys())
     groups.sort()
-    print(groups,len(groups))
     if len(groups) == 1:
         return implicants
     else:
@@ -228,7 +227,6 @@ def QM_tables(terms, min_or_max, var):
         num_dif = 1
         while making_tables:
             groups = sort_groups(list(implicants.keys()))
-            print(groups)
             current_group = groups[groups_index]
             next_group = groups[groups_index+1]
             if len(next_group) > num_dif:
@@ -287,14 +285,17 @@ def QM_tables(terms, min_or_max, var):
             if groups_index > len(groups)-2:
                 making_tables = False
 
+
         return implicants
 
 #Es la segunda parte del metodo Quine-Mckluskey
 #QM_imp_res hace la tabla de primos implicantes, y determina cuales de ellos son esenciales
 #Devuelve un string con la funcion simplificada de primos esenciales
 def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
+
+
     primes = [[], []]
-    print(imp_tab)
+
     if len(imp_tab) == 1:
         list_terms = []
         if len(list_var) == 0:
@@ -340,6 +341,7 @@ def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
             if i[1][1] == False:
                 primes[0].append(i)
 
+
     for j in range(len(primes[0])):
         primes[1].append([])
 
@@ -356,7 +358,13 @@ def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
                     primes[1][j].append(' ')
 
     primes[1] = np.array(primes[1])
+    '''for t in primes[0], primes[1]:
+        print(t)'''
     primes[1] = primes[1].T
+
+    # Prueba Tabla implicantes
+    '''for t in primes[0], primes[1]:
+        print(t)'''
 
     essentials = []
     used_terms = ()
@@ -364,7 +372,9 @@ def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
         if 'x' in e:
             marks, prime_index, counts = np.unique(e, return_index=True, return_counts=True)
             if len(marks) > 1:
+
                 if counts[1] == 1 and primes[0][prime_index[1]] not in essentials:
+
                     essentials.append(primes[0][prime_index[1]])
                     if type(primes[0][prime_index[1]][0]) == tuple:
                         used_terms += primes[0][prime_index[1]][0]
@@ -376,16 +386,20 @@ def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
     used_terms = set(used_terms)
     missing_terms = set(terms[min_or_max])-used_terms
 
+
     if len(missing_terms) > 0:
         if len(used_terms) > 0:
-            for mt in primes[0]:
-                if mt[0] is tuple:
-                    set_terms = set(mt[0])
-                    if missing_terms.issubset(set_terms):
-                        essentials.append(mt)
-                        break
+            if len(missing_terms) < len(used_terms):
+                for mt in primes[0]:
+                    if mt[0] is not int:
+
+                        set_terms = set(mt[0])
+                        if missing_terms.issubset(set_terms):
+                            essentials.append(mt)
+                            break
         else:
             essentials = primes[0]
+
 
 
     if len(list_var) == 0:
@@ -451,6 +465,18 @@ def sort_groups(list_groups):
         sort_list_groups += dict_groups[j]
 
     return sort_list_groups
+
+def prueba(funcion, min_or_max):
+    var, list_var = detectVar(funcion)
+    table = createTable(var,None)
+    funcExe = addecuateFunc(funcion)
+    table_res = evalFunc(funcExe, list_var, table)
+    tuple_res = minter_maxter(table_res, var)
+    imp = QM_tables(tuple_res, min_or_max, var)
+    sim_func, list_var = QM_imp_res(imp, min_or_max, tuple_res, list_var, var)
+    print(sim_func)
+
+prueba("(¬a^c+cd)ef", 0)
 
 
 
