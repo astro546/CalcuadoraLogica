@@ -184,6 +184,8 @@ class Example(MDApp):
                     "(a)(b), (a)+(b),(ab),(a+b),(a)^(b),(a^b)\n" \
                     "Tambien con los parentesis se pueden escribir funciones compuestas:" \
                     "a(c+d), ¬(a+b)c, (¬a^c+cd)ef\n" \
+                    "Si se pretenda poner una expresion negada despues de otra expresion entre parentesis , la expresion negada se debe encerrar en parentesis:\n" \
+                    "Ejemplo: ¬((x+y)(¬(x¬y+z))) , (a+b)(¬(cd)) \n" \
                     "Los parentesis deben de ir cerrados, y las operaciones no deben de estar imcompletas.\n" \
                     "Ademas de que las variables solo deben de ser letras mayusculas o minusculas, no se admiten numeros u otros caracteres especiales como variables." \
                     "Si estas condiciones no se cumplen, generaran errores. Ejemplos de mala sintaxis:\n" \
