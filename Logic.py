@@ -392,11 +392,12 @@ def QM_imp_res(imp_tab, min_or_max, terms, list_var, var):
             if len(missing_terms) < len(used_terms):
                 for mt in primes[0]:
                     if mt[0] is not int:
-
                         set_terms = set(mt[0])
-                        if missing_terms.issubset(set_terms):
-                            essentials.append(mt)
-                            break
+                    else:
+                        set_terms = {mt[0]}
+                    if missing_terms.issubset(set_terms):
+                        essentials.append(mt)
+                        break
         else:
             essentials = primes[0]
 
@@ -476,7 +477,7 @@ def prueba(funcion, min_or_max):
     sim_func, list_var = QM_imp_res(imp, min_or_max, tuple_res, list_var, var)
     print(sim_func)
 
-prueba("(¬a^c+cd)ef", 0)
+prueba("¬((x+y)(¬(x¬y+z)))", 0)
 
 
 

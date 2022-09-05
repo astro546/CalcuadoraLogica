@@ -106,9 +106,13 @@ WindowManager:
                 font_size: 20
                 on_release: func.text += '¬'
             Button:
-                text: "XOR (⊕)"
+                text: "XOR (^)"
                 font_size: 20
                 on_release: func.text += '⊕'
+            Button:
+                text: "Borrar texto"
+                font_size: 20
+                on_release: func.text = ""
 
         #Fila 4
         BoxLayout:
@@ -235,7 +239,7 @@ WindowManager:
                 text: "Evaluar"
                 font_size: 32
                 on_release:
-                    sim_func, terms_res, table_res, list_var = app.exeMinMax(MinMaxInput.text, dontCare, bits.text)
+                    sim_func, terms_res, table_res, list_var = app.exeMinMax(MinMaxInput.text, dontCare)
                     root.manager.screens[4].createMDtable(table_res, list_var)
                     root.manager.screens[4].add_func_label(sim_func)
                     root.manager.screens[4].ids.minmax.text = str(terms_res)
@@ -244,16 +248,6 @@ WindowManager:
         #Fila 3
         BoxLayout:
 
-            Label:
-                text: "Bits de entrada:"
-                font_size: 15
-                color: 0,0,1,1
-
-            TextInput:
-                id: bits
-                font_size: 15
-                multiline: False
-                font_name: 'FreeSans'
 
             Label:
                 text: "Minterminos"

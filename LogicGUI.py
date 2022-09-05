@@ -11,6 +11,7 @@ from kivy.metrics import dp
 from kivy.uix.label import Label
 import re
 import Logic
+import math
 
 
 class WindowManager(ScreenManager):
@@ -194,9 +195,7 @@ class Example(MDApp):
                      "Despues, aparece una ventana con una tabla de verdad, en la cual debes de marcar las casillas de las combinaciones cuyas salidas quieres que sea 1," \
                      "una casilla marcada significa 1, y una casilla descamarcada significa 0. Las tablas se presentan en grupos de 8 combinaciones, por lo que , por ejemplo," \
                      "para una tabla de verdad de 4 bits de entrada, esta se dividira en dos partes, una con las primeras 8 combinaciones de entrada, y otra con las otras 8 restantes."
-    textAyudaMinMax = "En la casilla de bits de entrada, se ingresa el numero de bits de entrada, no deben de ingresarse letras o caracteres especiales en ese campo.\n" \
-                      "\n" \
-                      "En la casilla de Terminos se ingresaran los terminos de la funcion, y se debe de marcar si son minterminos o maxterminos. Por default, el programa los toma como minterminos." \
+    textAyudaMinMax = "En la casilla de Terminos se ingresaran los terminos de la funcion, y se debe de marcar si son minterminos o maxterminos. Por default, el programa los toma como minterminos." \
                       "El formato para ingresar los terminos es el siguiente:\n" \
                       "1,2,3,4..,n o 1,2,3,4..,n\n," \
                       "En la casilla de terminos no se debe ingresar letras o caracteres especiales. Tampoco se deben ingresar comas seguidas.\n" \
@@ -298,7 +297,7 @@ class Example(MDApp):
                 return '', None, None
     #Crea la lista de terminos de los strings dados por el usuario
     def createMinMax(self, text_terms, dont_care, input_bits):
-        term_patt = r'\d,?[\d,]*'
+        term_patt = r'\d+'
         error_patt = r'\D+'
 
         error = re.findall(error_patt, text_terms)
@@ -355,22 +354,24 @@ class Example(MDApp):
             else:
                 return other_terms, terms, dont_care_terms
     #Evalua la lista de terminos creada anteriormente
-    def exeMinMax(self, text_terms, dont_care, input_bits_text):
+    def exeMinMax(self, text_terms, dont_care):
         try:
-            input_bits = int(input_bits_text)
+            input_bits = self.calculate_input_bits(text_terms)
+            tuple_terms = self.createMinMax(text_terms, dont_care, input_bits)
+            table = Logic.createTable(input_bits, tuple_terms)
+            tuple_terms = Logic.dont_care(tuple_terms, self.min_or_max)
+            imp = Logic.QM_tables(tuple_terms, self.min_or_max, input_bits)
+            sim_func, list_var = Logic.QM_imp_res(imp, self.min_or_max, tuple_terms, [], input_bits)
+            self.root.current = "fourth"
+            return sim_func, tuple_terms, table, list_var
         except:
-            text="En este campo solo se admiten valores numericos"
-            title= "Error de dato"
+            text = "Solo se deben ingresar caracteres numericos como terminos, no se admiten caracteres especiales ni letras, tampoco se admiten comas seguidas"
+            title = "Error de terminos"
             self.release_error(text, title)
-            return '', None, None
+            return "", [], [], []
 
-        tuple_terms = self.createMinMax(text_terms, dont_care, input_bits)
-        table = Logic.createTable(input_bits, tuple_terms)
-        tuple_terms = Logic.dont_care(tuple_terms, self.min_or_max)
-        imp = Logic.QM_tables(tuple_terms, self.min_or_max, input_bits)
-        sim_func, list_var = Logic.QM_imp_res(imp, self.min_or_max, tuple_terms, [], input_bits)
-        self.root.current = "fourth"
-        return sim_func, tuple_terms, table, list_var
+
+
     #Evalua la tabla de verdad creada por el usuario
     def exeTable(self, terms, table, input_bits):
         n = int(input_bits)
@@ -391,6 +392,13 @@ class Example(MDApp):
         title = "Error de dato"
         text = "Ingrese solo valores numericos"
         self.release_error(text, title)
-
+    #Calcula los bits de entrada de la lista de terminos
+    def calculate_input_bits(self,text_terms):
+        num_patt = r"\d+"
+        nums = re.findall(num_patt,text_terms)
+        nums_list = list(nums)
+        max_term = int(nums_list[-1])
+        input_bits = math.ceil(math.log(max_term, 2))
+        return input_bits
 
 Example().run()
